@@ -14,6 +14,9 @@ From there on you can set information for every page / chart like:
 
 ![Sample Image](https://i.redd.it/xvrq505akqx41.png)
 
+## Get a Release
+Releases can be found [at the release page.](https://github.com/HazZelnutz/Chorg/releases)
+
 ## Building
 To build edit `make.bat` and change the path to your msbuild.exe.
 Then just start the batch file.
