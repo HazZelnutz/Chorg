@@ -12,6 +12,8 @@ From there on you can set information for every page / chart like:
 
 > Chorg works best with a single PDF with one chart per page!
 
+![Sample Image](https://i.redd.it/xvrq505akqx41.png)
+
 ## Building
 To build edit `make.bat` and change the path to your msbuild.exe.
 Then just start the batch file.
