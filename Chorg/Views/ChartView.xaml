@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Chorg.Views.ChartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             xmlns:local="clr-namespace:Chorg.Views"
+             x:Name="MainControl">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Description -->
+        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="Description" FontSize="12pt" TextTrimming="CharacterEllipsis"/>
+        
+        <!-- Identifier -->
+        <TextBlock Grid.Row="1" Grid.Column="0" x:Name="Identifier" FontSize="9pt" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
+
+        <!-- ContentType -->
+        <TextBlock Grid.RowSpan="2" Grid.Column="1" x:Name="ContentString" Panel.ZIndex="1" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Rectangle Grid.RowSpan="2" Grid.Column="1" Fill="{Binding Accent}"/>
+
+        <!-- Edit -->
+        <md:PopupBox Grid.RowSpan="2" Grid.Column="2" StaysOpen="True" x:Name="Edit" 
+                     Visibility="{Binding ElementName=MainControl, Path=IsMouseOver, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Margin="5 0 0 0" cal:Message.Attach="[Event Opened] = [Action ResetEdit]">
+            <md:PopupBox.ToggleContent>
+                <md:PackIcon Kind="Pencil" Foreground="{DynamicResource MaterialDesignBody}"/>
+            </md:PopupBox.ToggleContent>
+        </md:PopupBox>
+        
+    </Grid>
+
+</UserControl>

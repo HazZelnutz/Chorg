@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Chorg.Views.PDFViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Chorg.Views"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Viewer-->
+        <WindowsFormsHost Grid.Column="0" x:Name="Wrapper"/>
+        
+        <!-- Controls -->
+        <Grid Grid.Column="1" Margin="20 0 0 0">
+
+            <StackPanel VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="Viewbox">
+                        <Setter Property="Margin" Value="0 10"/>
+                    </Style>
+                </StackPanel.Resources>
+                
+                <!-- Zoom Smaller -->
+                <Viewbox>
+                    <Button
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Content="{md:PackIcon MagnifyMinus}" 
+                        Foreground="{DynamicResource MaterialDesignBody}" 
+                        Cursor="Hand"
+                        Click="MagMinus_Click"/>
+                </Viewbox>
+                
+                <!-- Zoom Bigger -->
+                <Viewbox>
+                    <Button 
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Content="{md:PackIcon MagnifyPlus}" 
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Cursor="Hand"
+                        Click="MagPlus_Click"/>
+                </Viewbox>
+
+                <!-- Zoom Bigger -->
+                <Viewbox>
+                    <Button 
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Content="{md:PackIcon FitToPage}" 
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Cursor="Hand"
+                        Click="Fit_Click"/>
+                </Viewbox>
+
+                <!-- Rotate Left -->
+                <Viewbox>
+                    <Button 
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Content="{md:PackIcon RotateLeftVariant}" 
+                        Foreground="{DynamicResource MaterialDesignBody}" 
+                        Cursor="Hand"
+                        Click="RotateLeft_Click"/>
+                </Viewbox>
+
+                <!-- Rotate Right -->
+                <Viewbox>
+                    <Button
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Content="{md:PackIcon RotateRightVariant}" 
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Cursor="Hand"
+                        Click="RotateRight_Click"/>
+                </Viewbox>
+                          
+            </StackPanel>
+        </Grid>
+        
+    </Grid>
+</UserControl>

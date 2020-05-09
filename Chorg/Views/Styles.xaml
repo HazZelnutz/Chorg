@@ -1,0 +1,35 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Chorg.Views">
+    
+    <!-- Image Button -->
+    <Style TargetType="Button" x:Key="ImageButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Set MaxWidth for ListViewItems-->
+    <Style TargetType="ListViewItem" x:Key="ChorgListViewItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+        <Setter Property="MaxWidth" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}, Path=ActualWidth}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    </Style>
+    
+    <!-- Colors-->
+    <SolidColorBrush Color="#673AB7" x:Key="Color_GEN"/>
+    <SolidColorBrush Color="#FF9800" x:Key="Color_TAXI"/>
+    <SolidColorBrush Color="#AD1457" x:Key="Color_SID"/>
+    <SolidColorBrush Color="#0277BD" x:Key="Color_STAR"/>
+    <SolidColorBrush Color="#00695C" x:Key="Color_APP"/>
+    <SolidColorBrush Color="#424242" x:Key="Color_ND"/>
+    <SolidColorBrush Color="#F44336" x:Key="MaterialRed"/>
+    
+    <!-- Converters -->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+</ResourceDictionary>
