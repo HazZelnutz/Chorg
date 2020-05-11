@@ -150,7 +150,7 @@ CREATE TABLE "CHARTS" (
     <value>DELETE FROM CHARTS WHERE ID = ?</value>
   </data>
   <data name="sql_enableVacuum" xml:space="preserve">
-    <value>PRAGMA main.auto_vacuum = 1;</value>
+    <value>PRAGMA auto_vacuum=FULL;VACUUM;</value>
   </data>
   <data name="sql_readAirportExists" xml:space="preserve">
     <value>SELECT CASE WHEN COUNT(*) &gt; 0 THEN TRUE ELSE FALSE END FROM AIRPORTS WHERE ICAO = ?</value>

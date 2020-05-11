@@ -10,7 +10,7 @@ namespace Chorg.Models.Database
     public class DBClient
     {
         #region DEFINES
-        static readonly string connectionString = "Data Source=Chorg.db;Version=3;";
+        static readonly string connectionString = "Data Source=Chorg.db;Version=3;foreign_keys=True";
         enum COLUMNS_AIRPORTS { ID = 0, ICAO = 1, NAME = 2}
         enum COLUMNS_CHARTS { ID = 0, AIRPORT = 1, PAGE = 2, IDENTIFIER = 3, DESCRIPTION = 4, CONTENT = 5, PDF = 6, KEYWORDS = 7, PDFSIZE = 8 }
         #endregion
@@ -248,7 +248,13 @@ namespace Chorg.Models.Database
         /// <summary>
         /// Opens the DB Connection
         /// </summary>
-        public void Open() => dbCon.Open();
+        public void Open()
+        {
+            dbCon.Open();
+
+            // Enable Vacuuming
+            new SQLiteCommand(Properties.Resources.sql_enableVacuum, dbCon).ExecuteNonQuery();
+        }
 
         /// <summary>
         /// Closes the DB Connection
@@ -262,7 +268,6 @@ namespace Chorg.Models.Database
         {
             SQLiteConnection.CreateFile("Chorg.db");
             SQLiteCommand.Execute(Properties.Resources.sql_createDB, SQLiteExecuteType.NonQuery, connectionString);
-            SQLiteCommand.Execute(Properties.Resources.sql_enableVacuum, SQLiteExecuteType.NonQuery, connectionString);
         }
     }
 }

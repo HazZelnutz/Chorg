@@ -122,7 +122,7 @@ namespace Chorg.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PRAGMA main.auto_vacuum = 1;.
+        ///   Looks up a localized string similar to PRAGMA auto_vacuum=FULL;VACUUM;.
         /// </summary>
         internal static string sql_enableVacuum {
             get {
