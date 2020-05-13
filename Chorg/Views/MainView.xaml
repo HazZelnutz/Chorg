@@ -32,6 +32,13 @@
                             <TextBlock Text="Add Airport" VerticalAlignment="Center" Margin="10 0 0 0"/>
                         </StackPanel>
                     </Button>
+                    
+                    <Button x:Name="EditCharts">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="FileEdit" VerticalAlignment="Center"/>
+                            <TextBlock Text="Edit Charts" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button>
 
                     <ListBox SelectionMode="Extended">
                         <ListBoxItem Content="N.D." IsSelected="{Binding Filter_ND}" ToolTip="Filter Not Defined Charts"/>

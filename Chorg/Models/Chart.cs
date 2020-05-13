@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using Chorg.ViewModels;
@@ -69,6 +69,14 @@ namespace Chorg.Models
             }
             else
                 return rawPDF;
+        }
+
+        public Chart Clone()
+        {
+            Chart temp = (Chart)MemberwiseClone();
+            temp.FreeRawPdf();
+            temp.Keywords = Keywords == null ? null : new List<string>(Keywords);
+            return temp;
         }
 
         public void FreeRawPdf()

@@ -10,13 +10,11 @@ namespace Chorg.ViewModels
     public class EditChartViewModel : Screen
     {
         private Chart chartModel;
-        private ChartViewModel chartViewModel;
 
-        private ContentType _Content;
         private ContentType Content
         {
-            get => _Content;
-            set { _Content = value; CanSave = true; }
+            get => chartModel.Content;
+            set => chartModel.Content = value; 
         }
 
         #region ContentBools
@@ -51,21 +49,22 @@ namespace Chorg.ViewModels
         }
         #endregion
 
-        private string _Description;
         public string Description
         {
-            get => _Description;
-            set { _Description = value; CanSave = true; }
+            get => chartModel.Description;
+            set => chartModel.Description = value;
         }
 
-        private string _Identifier;
         public string Identifier
         {
-            get => _Identifier; 
-            set { _Identifier = value; CanSave = true; }
+            get => chartModel.Identifier;
+            set => chartModel.Identifier = value; 
         }
 
-        public ObservableCollection<string> Keywords { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> Keywords
+        {
+            get => chartModel.Keywords == null ? new ObservableCollection<string>() : new ObservableCollection<string>(chartModel.Keywords);
+        }
 
         public bool HasKeywords
         {
@@ -79,32 +78,10 @@ namespace Chorg.ViewModels
             set { _NewKeyword = value; NotifyOfPropertyChange(() => NewKeyword); }
         }
 
-        private bool _IsBusy;
-        public bool IsBusy
-        {
-            get { return _IsBusy; }
-            set { _IsBusy = value; NotifyOfPropertyChange(() => IsBusy); }
-        }
-
-        private bool _WasError;
-        public bool WasError
-        {
-            get { return _WasError; }
-            set { _WasError = value; NotifyOfPropertyChange(() => WasError); }
-        }
-
-        private bool _CanSave;
-        public bool CanSave
-        {
-            get { return _CanSave; }
-            set { _CanSave = value; NotifyOfPropertyChange(() => CanSave); }
-        }
-
-        public EditChartViewModel(Chart chart, ChartViewModel chartVM)
+        public EditChartViewModel(Chart chart)
         {
             // Model and ViewModel
             chartModel = chart;
-            chartViewModel = chartVM;
 
             // Properties of Model
             Content = chart.Content;
@@ -113,20 +90,24 @@ namespace Chorg.ViewModels
             Keywords.Replace(chart.Keywords);
 
             // Update Property "HasKeywords"
-            Keywords.CollectionChanged += (o, e) => { NotifyOfPropertyChange(() => HasKeywords); CanSave = true; };
-
-            CanSave = false;
+            Keywords.CollectionChanged += (o, e) => { NotifyOfPropertyChange(() => HasKeywords);  };
         }
 
         public void DeleteKeyword(string keyword)
-            => Keywords.Remove(keyword);
+        {
+            chartModel.Keywords.Remove(keyword);
+            NotifyOfPropertyChange(() => Keywords);
+        }
         
         public void AddKeyword()
         {
             if (!string.IsNullOrWhiteSpace(NewKeyword))
             {
                 if (!Keywords.Contains(NewKeyword))
-                    Keywords.Add(NewKeyword);
+                {
+                    chartModel.Keywords.Add(NewKeyword);
+                    NotifyOfPropertyChange(() => Keywords);
+                }
             }
             NewKeyword = null;
         }
@@ -136,44 +117,6 @@ namespace Chorg.ViewModels
             if (e.Key == Key.Enter) 
                 AddKeyword();
         }
-
-        /// <summary>
-        /// Updates the model and returns the new one
-        /// </summary>
-        /// <returns>Updated model</returns>
-        Chart GetUpdatedModel()
-        {
-            chartModel.Content = Content;
-            chartModel.Identifier = Identifier;
-            chartModel.Description = Description;
-            chartModel.Keywords = Keywords;
-
-            return chartModel;
-        }
-
-        /// <summary>
-        /// Updates the chart in the DB
-        /// </summary>
-        public async void Save()
-        {
-            WasError = false;
-            IsBusy = true;
-
-            try
-            {
-                await Gateway.GetInstance().UpdateChartAsync(GetUpdatedModel());
-                MainViewModel.GetInstance().TriggerSnackbar("Updated the Chart", "OK");
-                PopupBox.ClosePopupCommand.Execute(null, null);
-            }
-            catch (Exception e)
-            {
-                WasError = true;
-                MainViewModel.GetInstance().TriggerSnackbar(e);
-            }
-
-            IsBusy = false;
-        }
-
 
         private bool _ConfirmPending;
         public bool ConfirmPending
@@ -194,10 +137,11 @@ namespace Chorg.ViewModels
             {
                 try
                 {
+                    // Remove from Database
                     await Gateway.GetInstance().DeleteChartAsync(chartModel);
-                    MainViewModel.GetInstance().Charts.Remove(chartViewModel);
-                    MainViewModel.GetInstance().TriggerSnackbar("Deleted the Chart", "BYE");
-                    PopupBox.ClosePopupCommand.Execute(null, null);
+
+                    // Remove from Chart Editor
+                    (Parent as EditChartsViewModel).ChartThumbs.Remove(chartModel);
                 }
                 catch (Exception e)
                 {

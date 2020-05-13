@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Chorg.ViewModels;
+using Chorg.Models;
 
 namespace Chorg.Models
 {
@@ -18,6 +20,18 @@ namespace Chorg.Models
 
             foreach (T current in items)
                 collection.Add(current);
+        }
+
+        public static void Remove(this ICollection<ChartThumbnailViewModel> collection, Chart item)
+        {
+            foreach (var viewModel in collection)
+            {
+                if(viewModel.GetModel().Id == item.Id)
+                {
+                    collection.Remove(viewModel);
+                    return;
+                }
+            }
         }
     }
 }
