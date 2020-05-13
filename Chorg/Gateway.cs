@@ -35,7 +35,7 @@ namespace Chorg
         /// <param name="icao">ICAO of the Airport</param>
         /// <param name="pdf">Path to PDF</param>
         /// <param name="name">Name of Airport (optional)</param>
-        public async Task<Airport> AddAirportAsync(string icao, string pdf, string name = null)
+        public async Task<Airport> AddAirportAsync(string icao, string name = null)
         {
             Airport airport = null;
 
@@ -43,14 +43,19 @@ namespace Chorg
             {
                 airport = new Airport(icao)
                 {
-                    Charts = new List<Chart>(Slicer.Slice(pdf)),
-                    Name = name
+                    Name = name,
+                    Charts = new List<Chart>()
                 };
 
                 DBClient.AddAirport(airport);
             });
 
             return airport;
+        }
+
+        public async Task AddChartToAirportAsync(Chart chart, Airport airport)
+        {
+            await Task.Run(() => DBClient.AddChartToAirport(chart, airport));
         }
 
         /// <summary>
