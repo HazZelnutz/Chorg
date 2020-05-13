@@ -9,20 +9,18 @@ namespace Chorg.ViewModels
 {
     public class AirportViewModel : Screen, ITextSearch
     {
-        private Airport airportModel;
+        private Airport model;
 
-        public EditAirportViewModel Edit { get => new EditAirportViewModel(airportModel, this); }
+        public EditAirportViewModel Edit { get => new EditAirportViewModel(model, this); }
 
-        public string ICAO { get => airportModel.ICAO; }
-        public string AirportName { get => airportModel.Name ?? "No Name"; }
-        public List<ChartViewModel> Charts { get; }
+        public string ICAO { get => model.ICAO; }
+        public string AirportName { get => model.Name ?? "No Name"; }
+        public List<ChartViewModel> Charts { get => model.Charts.ToList().ConvertAll(chart => (ChartViewModel)chart); }
 
         public AirportViewModel(Airport model)
         {
-            airportModel = model;
-            airportModel.PropertyChanged += ModelChanged;
-
-            Charts = new List<ChartViewModel>(model.Charts.ToList().ConvertAll(chart => (ChartViewModel)chart));
+            this.model = model;
+            model.PropertyChanged += ModelChanged;
         }
 
         /// <summary>
@@ -40,6 +38,9 @@ namespace Chorg.ViewModels
                     break;
             }
         }
+
+        public Airport GetModel()
+            => model;
 
         /// <summary>
         /// Call a PropertyChanged on Edit: Returns a new copy of the Edit ViewModel

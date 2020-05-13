@@ -79,7 +79,7 @@ namespace Chorg.Models.Database
                             Identifier = identifier,
                             Description = description,
                             Content = content,
-                            Keywords = keywordsRaw?.Split('\n')
+                            Keywords = keywordsRaw?.Split('\n').ToList()
                         });;
                     }
                 }

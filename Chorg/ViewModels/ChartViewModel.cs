@@ -10,35 +10,33 @@ namespace Chorg.ViewModels
 {
     public class ChartViewModel : Screen, ITextSearch
     {
-        private Chart chartModel;
-
-        public EditChartViewModel Edit { get => new EditChartViewModel(chartModel, this); } 
+        private Chart model;
 
         public string Identifier
         {
-            get => chartModel.Identifier ?? "No Identifier";
+            get => model.Identifier ?? "No Identifier";
         }
 
         public string Description
         {
-            get => chartModel.Description ?? "No Description";
+            get => model.Description ?? "No Description";
         }
 
         public MemoryStream PDFStream
         {
-            get => chartModel.GetStream();
+            get => model.GetStream();
         }
 
         public ContentType Content
         {
-            get => chartModel.Content;
+            get => model.Content;
         }
 
         public string ContentString
         {
             get 
             {
-                switch (chartModel.Content)
+                switch (model.Content)
                 {
                     case ContentType.GENERAL:
                         return "GEN";
@@ -61,7 +59,7 @@ namespace Chorg.ViewModels
         public SolidColorBrush Accent 
         {
             get {
-                switch (chartModel.Content)
+                switch (model.Content)
                 {
                     case ContentType.GENERAL:
                         return (SolidColorBrush)App.Current.FindResource("Color_GEN");
@@ -83,8 +81,8 @@ namespace Chorg.ViewModels
 
         public ChartViewModel(Chart model)
         {
-            chartModel = model;
-            chartModel.PropertyChanged += ModelChanged;
+            this.model = model;
+            this.model.PropertyChanged += ModelChanged;
         }
 
         /// <summary>
@@ -112,15 +110,12 @@ namespace Chorg.ViewModels
             }
         }
 
-        /// <summary>
-        /// Call a PropertyChanged on Edit: Returns a new copy of the Edit ViewModel
-        /// </summary>
-        public void ResetEdit()
-            => NotifyOfPropertyChange(() => Edit);
+        public Chart GetModel()
+            => model;
 
         private string Stringify()
             => (Identifier ?? string.Empty) + " " + (Description ?? string.Empty) + " " 
-                + chartModel.Keywords?.Aggregate(string.Empty, (acc, current) => acc += current + " ");
+                + model.Keywords?.Aggregate(string.Empty, (acc, current) => acc += current + " ");
         
         public bool SearchPredicate(string searchText)    
             => Stringify().IndexOf(searchText ?? string.Empty, StringComparison.OrdinalIgnoreCase) >= 0;

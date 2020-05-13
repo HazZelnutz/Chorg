@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using Chorg.ViewModels;
@@ -30,7 +30,7 @@ namespace Chorg.Models
             get => _Content;
             set { _Content = value; NotifyOfPropertyChange(() => Content); } }
 
-        public ICollection<string> Keywords { get; set; }
+        public List<string> Keywords { get; set; } = new List<string>();
         public SQLiteBlob Blob { get; set; }
 
         byte[] rawPDF;
