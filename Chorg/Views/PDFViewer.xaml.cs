@@ -44,7 +44,19 @@ namespace Chorg.Views
         private void RenderPDF()
         {
             viewer.Document?.Dispose();
-            viewer.Document = PdfDocument.Load(PDFStream);     
+            if(PDFStream != null)
+            {
+                // Avoid 'blinking'
+                if(Wrapper.Child == null)
+                    Wrapper.Child = viewer;
+
+                viewer.Document = PdfDocument.Load(PDFStream); 
+            }
+            else
+            {
+                Wrapper.Child = null;
+                viewer.Document = null;
+            }
         }
 
         private void MagMinus_Click(object sender, RoutedEventArgs e)
