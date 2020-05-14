@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -250,6 +250,7 @@ namespace Chorg.ViewModels
             {
                 var airports = await Gateway.GetInstance().GetAirportsAsync();
                 Airports.Replace(airports.ToList().ConvertAll(airport => (AirportViewModel)airport));
+                MainViewModel.GetInstance().TriggerSnackbar($"Loaded {airports.Count} Airport(s)", "OK");
             }
             catch (Exception e)
             {
