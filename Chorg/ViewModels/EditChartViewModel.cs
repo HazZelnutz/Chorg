@@ -1,4 +1,4 @@
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Chorg.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ namespace Chorg.ViewModels
         private ContentType Content
         {
             get => chartModel.Content;
-            set => chartModel.Content = value; 
+            set { chartModel.Content = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
         #region ContentBools
@@ -52,13 +52,13 @@ namespace Chorg.ViewModels
         public string Description
         {
             get => chartModel.Description;
-            set => chartModel.Description = value;
+            set { chartModel.Description = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
         public string Identifier
         {
             get => chartModel.Identifier;
-            set => chartModel.Identifier = value; 
+            set { chartModel.Identifier = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
         public ObservableCollection<string> Keywords
@@ -87,6 +87,7 @@ namespace Chorg.ViewModels
         public void DeleteKeyword(string keyword)
         {
             chartModel.Keywords.Remove(keyword);
+            (Parent as EditChartsViewModel).UnsavedChanges = true;     
             NotifyOfPropertyChange(() => Keywords);
             NotifyOfPropertyChange(() => HasKeywords);
         }
@@ -98,6 +99,7 @@ namespace Chorg.ViewModels
                 if (!Keywords.Contains(NewKeyword))
                 {
                     chartModel.Keywords.Add(NewKeyword);
+                    (Parent as EditChartsViewModel).UnsavedChanges = true;
                     NotifyOfPropertyChange(() => Keywords);
                     NotifyOfPropertyChange(() => HasKeywords);
                 }

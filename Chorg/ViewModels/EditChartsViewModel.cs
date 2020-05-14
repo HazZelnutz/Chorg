@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,6 +73,8 @@ namespace Chorg.ViewModels
 
         public bool CanInteract { get => !IsBusy; }
 
+        public bool UnsavedChanges { get; set; }
+
         public EditChartsViewModel(Airport airport)
         {
             model = airport;
@@ -106,8 +108,7 @@ namespace Chorg.ViewModels
                 IsBusySlicing = true;
                 string pdfPath = dialog.FileName;
                 var newPdfs = await Slicer.SliceAsync(pdfPath);
-                _ = Task.Run(() => newPdfs.ToList().ForEach(x => ChartThumbs.Add(new ChartThumbnailViewModel(x))));
-                IsBusySlicing = false;
+                UnsavedChanges = true;
             }
         }
 
@@ -119,6 +120,24 @@ namespace Chorg.ViewModels
         {
             foreach (var thumb in ChartThumbs)
                 yield return thumb.GetModel();
+        }
+
+        /// <summary>
+        /// Handles closings
+        /// </summary>
+        public async void Close()
+        {
+            bool sure = false;
+
+            if (UnsavedChanges)
+            {
+                await DialogHost.Show(new Views.PromptDiscardChanges(), "EditChartsDialogHost", delegate (object sender, DialogClosingEventArgs e) {
+                    sure = (bool)e.Parameter;
+                });
+            }
+
+            if (!UnsavedChanges || sure)
+                DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
         /// <summary>
@@ -141,8 +160,7 @@ namespace Chorg.ViewModels
                     await Gateway.GetInstance().UpdateChartAsync(chart);
                 }
             }
-
-            IsBusySaving = false;
+            UnsavedChanges = false;
         }
     }
 }
