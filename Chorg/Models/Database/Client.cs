@@ -79,8 +79,8 @@ namespace Chorg.Models.Database
                             Identifier = identifier,
                             Description = description,
                             Content = content,
-                            Keywords = keywordsRaw?.Split('\n').ToList()
-                        });;
+                            Keywords = keywordsRaw == null ? new List<string>() : keywordsRaw.Split('\n').ToList()
+                        });
                     }
                 }
             }
@@ -172,7 +172,7 @@ namespace Chorg.Models.Database
             updateChartCmd.Parameters.Add(new SQLiteParameter("@id", DbType.Int32) { Value = chart.Id });
             updateChartCmd.Parameters.Add(new SQLiteParameter("@keywords", DbType.String)
             {
-                Value = chart.Keywords?.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n')
+                Value = chart.Keywords.Count > 0 ? chart.Keywords.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n') : null
             });
 
             updateChartCmd.ExecuteNonQuery();
