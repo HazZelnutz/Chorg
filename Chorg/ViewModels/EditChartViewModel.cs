@@ -1,4 +1,4 @@
-﻿using Caliburn.Micro;
+using Caliburn.Micro;
 using Chorg.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -82,15 +82,6 @@ namespace Chorg.ViewModels
         {
             // Model and ViewModel
             chartModel = chart;
-
-            // Properties of Model
-            Content = chart.Content;
-            Description = chart.Description;
-            Identifier = chart.Identifier;
-            Keywords.Replace(chart.Keywords);
-
-            // Update Property "HasKeywords"
-            Keywords.CollectionChanged += (o, e) => { NotifyOfPropertyChange(() => HasKeywords);  };
         }
 
         public void DeleteKeyword(string keyword)
