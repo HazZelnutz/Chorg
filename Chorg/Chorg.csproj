@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\PdfiumViewer.Native.x86.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86.v8-xfa.props" Condition="Exists('..\packages\PdfiumViewer.Native.x86.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86.v8-xfa.props')" />
   <Import Project="..\packages\PdfiumViewer.Native.x86_64.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86_64.v8-xfa.props" Condition="Exists('..\packages\PdfiumViewer.Native.x86_64.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86_64.v8-xfa.props')" />
@@ -93,6 +93,7 @@
     <Reference Include="System.Data.SQLite, Version=1.0.112.1, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.112.2\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -125,8 +126,10 @@
     <Compile Include="Models\Types.cs" />
     <Compile Include="ViewModels\AddAirportViewModel.cs" />
     <Compile Include="ViewModels\AirportViewModel.cs" />
+    <Compile Include="ViewModels\ChartThumbnailViewModel.cs" />
     <Compile Include="ViewModels\ChartViewModel.cs" />
     <Compile Include="ViewModels\EditAirportViewModel.cs" />
+    <Compile Include="ViewModels\EditChartsViewModel.cs" />
     <Compile Include="ViewModels\EditChartViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\AboutView.xaml.cs">
@@ -138,12 +141,18 @@
     <Compile Include="Views\AirportView.xaml.cs">
       <DependentUpon>AirportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChartThumbnailView.xaml.cs">
+      <DependentUpon>ChartThumbnailView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChartView.xaml.cs">
       <DependentUpon>ChartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Converter.cs" />
     <Compile Include="Views\EditAirportView.xaml.cs">
       <DependentUpon>EditAirportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditChartsView.xaml.cs">
+      <DependentUpon>EditChartsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditChartView.xaml.cs">
       <DependentUpon>EditChartView.xaml</DependentUpon>
@@ -171,11 +180,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ChartThumbnailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditAirportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditChartsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
