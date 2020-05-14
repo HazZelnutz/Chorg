@@ -63,7 +63,7 @@ namespace Chorg.ViewModels
 
         public ObservableCollection<string> Keywords
         {
-            get => chartModel.Keywords == null ? new ObservableCollection<string>() : new ObservableCollection<string>(chartModel.Keywords);
+            get => new ObservableCollection<string>(chartModel.Keywords);
         }
 
         public bool HasKeywords
@@ -88,6 +88,7 @@ namespace Chorg.ViewModels
         {
             chartModel.Keywords.Remove(keyword);
             NotifyOfPropertyChange(() => Keywords);
+            NotifyOfPropertyChange(() => HasKeywords);
         }
         
         public void AddKeyword()
@@ -98,6 +99,7 @@ namespace Chorg.ViewModels
                 {
                     chartModel.Keywords.Add(NewKeyword);
                     NotifyOfPropertyChange(() => Keywords);
+                    NotifyOfPropertyChange(() => HasKeywords);
                 }
             }
             NewKeyword = null;
