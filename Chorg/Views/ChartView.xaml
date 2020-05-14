@@ -25,8 +25,8 @@
         <TextBlock Grid.Row="1" Grid.Column="0" x:Name="Identifier" FontSize="9pt" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
 
         <!-- ContentType -->
-        <TextBlock Grid.RowSpan="2" Grid.Column="1" x:Name="ContentString" Panel.ZIndex="1" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Rectangle Grid.RowSpan="2" Grid.Column="1" Fill="{Binding Accent}"/>
+        <TextBlock Grid.RowSpan="2" Grid.Column="1" Text="{Binding Content, Converter={StaticResource ContentToStringConverter}}" Panel.ZIndex="1" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Rectangle Grid.RowSpan="2" Grid.Column="1" Fill="{Binding Content, Converter={StaticResource ContentToSolidColorBrushConverter}}"/>
     </Grid>
 
 </UserControl>
