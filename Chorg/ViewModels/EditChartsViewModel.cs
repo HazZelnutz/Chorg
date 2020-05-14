@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Windows.Threading;
 using System.Windows.Data;
 using Org.BouncyCastle.Bcpg;
+using MaterialDesignThemes.Wpf;
 
 namespace Chorg.ViewModels
 {
@@ -36,38 +37,38 @@ namespace Chorg.ViewModels
             }
         }
 
-        private bool _IsBusySaving;
-        public bool IsBusySaving
+        private bool _IsBusyIndeterminate;
+        public bool IsBusyIndeterminate
         {
-            get => _IsBusySaving;
+            get => _IsBusyIndeterminate;
             set {
-                _IsBusySaving = value;
-                NotifyOfPropertyChange(() => IsBusySaving);
+                _IsBusyIndeterminate = value;
+                NotifyOfPropertyChange(() => IsBusyIndeterminate);
                 NotifyOfPropertyChange(() => IsBusy);
                 NotifyOfPropertyChange(() => CanInteract);
             }
         }
 
-        private bool _IsBusySlicing;
-        public bool IsBusySlicing
+        private bool _IsBusyDeterminate;
+        public bool IsBusyDeterminate
         {
-            get => _IsBusySlicing;
+            get => _IsBusyDeterminate;
             set
             {
-                _IsBusySlicing = value;
-                NotifyOfPropertyChange(() => IsBusySlicing);
+                _IsBusyDeterminate = value;
+                NotifyOfPropertyChange(() => IsBusyDeterminate);
                 NotifyOfPropertyChange(() => IsBusy);
                 NotifyOfPropertyChange(() => CanInteract);
             }
         }
 
-        public bool IsBusy { get => IsBusySaving || IsBusySlicing; }
+        public bool IsBusy { get => IsBusyIndeterminate || IsBusyDeterminate; }
 
-        private int _SliceProgress;
-        public int SliceProgress
+        private int _DeterminateProgress;
+        public int DeterminateProgress
         {
-            get => _SliceProgress;
-            set { _SliceProgress = value; NotifyOfPropertyChange(() => SliceProgress); }
+            get => _DeterminateProgress;
+            set { _DeterminateProgress = value; NotifyOfPropertyChange(() => DeterminateProgress); }
         }
 
 
@@ -80,14 +81,20 @@ namespace Chorg.ViewModels
             model = airport;
 
             // Slice Progress
-            Slicer.ProgressChanged += (o, e) => SliceProgress = e.ProgressPercentage;
+            Slicer.ProgressChanged += (o, e) => DeterminateProgress = e.ProgressPercentage;
 
             // Add copies of the charts
             var clones = airport.Charts.ToList().ConvertAll(x => x.Clone());
 
             // Render Thumbnails in Background
             BindingOperations.EnableCollectionSynchronization(ChartThumbs, thumbnailsLock);
-            Task.Run(() => clones.ForEach(x => ChartThumbs.Add(new ChartThumbnailViewModel(x))));
+
+            Task.Run(() => {
+                DeterminateProgress = 75;
+                IsBusyIndeterminate = true;
+                clones.ForEach(x => ChartThumbs.Add(new ChartThumbnailViewModel(x)));
+                IsBusyIndeterminate = false;
+            });
         }
 
 
@@ -104,11 +111,20 @@ namespace Chorg.ViewModels
 
             if ((bool)dialog.ShowDialog())
             {
-                SliceProgress = 0;
-                IsBusySlicing = true;
+                DeterminateProgress = 0;
+                IsBusyDeterminate = true;
                 string pdfPath = dialog.FileName;
                 var newPdfs = await Slicer.SliceAsync(pdfPath);
+
+                _ = Task.Run(() => {
+                    DeterminateProgress = 75;
+                    IsBusyIndeterminate = true;
+                    newPdfs.ToList().ForEach(x => ChartThumbs.Add(new ChartThumbnailViewModel(x)));
+                    IsBusyIndeterminate = false;
+                });
+
                 UnsavedChanges = true;
+                IsBusyDeterminate = false;
             }
         }
 
@@ -145,8 +161,8 @@ namespace Chorg.ViewModels
         /// </summary>
         public async void Save()
         {
-            SliceProgress = 75;
-            IsBusySaving = true;
+            DeterminateProgress = 75;
+            IsBusyIndeterminate = true;
 
             foreach (Chart chart in GetModels())
             {
@@ -161,6 +177,8 @@ namespace Chorg.ViewModels
                 }
             }
             UnsavedChanges = false;
+            IsBusyIndeterminate = false;
+            DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
 }
