@@ -3,10 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Chorg.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Image x:Name="Thumbnail" Width="100" Height="141"/>
+    <Grid Width="120" Height="150">
+        <md:Badged Badge="{Binding Content, Converter={StaticResource ContentToStringConverter}}" 
+                   BadgeBackground="{Binding Content, Converter={StaticResource ContentToSolidColorBrushConverter}}"
+                   BadgeForeground="{DynamicResource MaterialDesignBody}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image x:Name="Thumbnail" Width="100" Height="141"/>
+        </md:Badged>
     </Grid>
 </UserControl>

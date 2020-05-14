@@ -15,14 +15,29 @@ namespace Chorg.ViewModels
     public class ChartThumbnailViewModel : Screen
     {
         public BitmapImage Thumbnail { get; }
+        public ContentType Content { get => model.Content; }
 
         private Chart model;
 
         public ChartThumbnailViewModel(Chart chart)
         {
             model = chart;
+            model.PropertyChanged += ModelChanged;
             Thumbnail = Render();
             Thumbnail.Freeze();
+        }
+
+        private void ModelChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Content":
+                    NotifyOfPropertyChange(() => Content);
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public Chart GetModel() => model;
