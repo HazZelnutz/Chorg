@@ -80,9 +80,6 @@ namespace Chorg.ViewModels
         {
             model = airport;
 
-            // Slice Progress
-            Slicer.ProgressChanged += (o, e) => DeterminateProgress = e.ProgressPercentage;
-
             // Add copies of the charts
             var clones = airport.Charts.ToList().ConvertAll(x => x.Clone());
 
@@ -114,7 +111,9 @@ namespace Chorg.ViewModels
                 DeterminateProgress = 0;
                 IsBusyDeterminate = true;
                 string pdfPath = dialog.FileName;
+                Slicer.ProgressChanged += (o, e) => DeterminateProgress = e.ProgressPercentage;
                 var newPdfs = await Slicer.SliceAsync(pdfPath);
+                Slicer.ProgressChanged -= (o, e) => DeterminateProgress = e.ProgressPercentage;
 
                 _ = Task.Run(() => {
                     DeterminateProgress = 75;

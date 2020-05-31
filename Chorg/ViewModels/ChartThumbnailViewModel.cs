@@ -9,12 +9,15 @@ using System.Windows.Media.Imaging;
 using PdfiumViewer;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Drawing;
+using System.Windows;
+using System.Runtime.InteropServices;
 
 namespace Chorg.ViewModels
 {
     public class ChartThumbnailViewModel : Screen
     {
-        public BitmapImage Thumbnail { get; }
+        public BitmapSource Thumbnail { get; }
         public ContentType Content { get => model.Content; }
 
         private Chart model;
@@ -24,7 +27,6 @@ namespace Chorg.ViewModels
             model = chart;
             model.PropertyChanged += ModelChanged;
             Thumbnail = Render();
-            Thumbnail.Freeze();
         }
 
         private void ModelChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -42,20 +44,28 @@ namespace Chorg.ViewModels
 
         public Chart GetModel() => model;
 
-        private BitmapImage Render()
+        private BitmapSource Render()
         {
             PdfDocument document = PdfDocument.Load(model.GetStream());
             var image = document.Render(0, 100, 100, false);
             document.Dispose();
 
-            MemoryStream stream = new MemoryStream();
-            image.Save(stream, ImageFormat.Bmp);
+            var bitmap = new Bitmap(image);
+            IntPtr bmpPt = bitmap.GetHbitmap();
+            var bmpSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                bmpPt,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions()
+            );
 
-            BitmapImage bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = stream;
-            bitmapImage.EndInit();
-            return bitmapImage;
+            bmpSource.Freeze();
+            DeleteObject(bmpPt);
+            return bmpSource;
         }
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool DeleteObject(IntPtr value);
     }
 }
