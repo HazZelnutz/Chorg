@@ -274,6 +274,9 @@ namespace Chorg.ViewModels
                 Airports.Add((AirportViewModel)result);        
         }
 
+        /// <summary>
+        /// Opens the Edit Charts Dialog
+        /// </summary>
         public async void EditCharts()
         {
             var view = new EditChartsView();
