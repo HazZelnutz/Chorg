@@ -5,9 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Chorg.Views"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
-    
-    <StackPanel Margin="20" Width="300">
-        
+
+    <md:DialogHost Identifier="EditAirportDialogHost" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
+        <StackPanel Margin="20 5 20 20" Width="300">
+
+        <!-- Close Button -->
+        <Button Grid.Column="2" Grid.Row="0" x:Name="Close" Content="{md:PackIcon Kind=Close}" Style="{StaticResource MaterialDesignIconButton}"
+                HorizontalAlignment="Right"
+                Foreground="{DynamicResource MaterialDesignBody}"/>
+
         <!-- ICAO -->
         <TextBox x:Name="ICAO" IsEnabled="False" Margin="0 0 0 30" md:HintAssist.HelperText="Can't be changed" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"/>
 
@@ -94,4 +100,5 @@
 
 
     </StackPanel>
+    </md:DialogHost>
 </UserControl>

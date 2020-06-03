@@ -8,7 +8,6 @@ namespace Chorg.ViewModels
     public class EditAirportViewModel : Screen
     {
         private Airport airportModel;
-        private AirportViewModel airportViewModel;
 
         public string ICAO { get; }
 
@@ -47,11 +46,11 @@ namespace Chorg.ViewModels
             set { _WasError = value; NotifyOfPropertyChange(() => WasError); }
         }
 
-        public EditAirportViewModel(Airport airport, AirportViewModel airportVM)
+
+        public EditAirportViewModel(Airport airport)
         {
             // Model and ViewModel
             airportModel = airport;
-            airportViewModel = airportVM;
 
             // Properties of Model
             ICAO = airport.ICAO;
@@ -82,7 +81,7 @@ namespace Chorg.ViewModels
             {
                 await Gateway.GetInstance().UpdateAirportAsync(GetUpdatedModel(), false);
                 MainViewModel.GetInstance().TriggerSnackbar($"Updated {airportModel.ICAO}", "OK");
-                PopupBox.ClosePopupCommand.Execute(null, null);
+                DialogHost.CloseDialogCommand.Execute(null, null);
             }
             catch (Exception e)
             {
@@ -106,15 +105,32 @@ namespace Chorg.ViewModels
                 try
                 {
                     await Gateway.GetInstance().DeleteAirportAsync(airportModel);
-                    MainViewModel.GetInstance().Airports.Remove(airportViewModel);
                     MainViewModel.GetInstance().TriggerSnackbar($"Deleted {airportModel.ICAO}", "BYE");
-                    PopupBox.ClosePopupCommand.Execute(null, null);
+                    DialogHost.CloseDialogCommand.Execute(null, null);
                 }
                 catch (Exception e)
                 {
                     MainViewModel.GetInstance().TriggerSnackbar(e);
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles closings
+        /// </summary>
+        public async void Close()
+        {
+            bool sure = false;
+
+            if (CanSave)
+            {
+                await DialogHost.Show(new Views.PromptDiscardChanges(), "EditAirportDialogHost", delegate (object sender, DialogClosingEventArgs e) {
+                    sure = (bool)e.Parameter;
+                });
+            }
+
+            if (!CanSave || sure)
+                DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
 }

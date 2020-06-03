@@ -11,8 +11,6 @@ namespace Chorg.ViewModels
     {
         private Airport model;
 
-        public EditAirportViewModel Edit { get => new EditAirportViewModel(model, this); }
-
         public string ICAO { get => model.ICAO; }
         public string AirportName { get => model.Name ?? "No Name"; }
         public List<ChartViewModel> Charts { get => model.Charts.ToList().ConvertAll(chart => (ChartViewModel)chart); }
@@ -41,12 +39,6 @@ namespace Chorg.ViewModels
 
         public Airport GetModel()
             => model;
-
-        /// <summary>
-        /// Call a PropertyChanged on Edit: Returns a new copy of the Edit ViewModel
-        /// </summary>
-        public void ResetEdit()
-            => NotifyOfPropertyChange(() => Edit);
 
         private string Stringify()        
             => ICAO + " " + AirportName ?? string.Empty;        

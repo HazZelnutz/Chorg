@@ -45,12 +45,12 @@ namespace Chorg.ViewModels
             }
         }
 
-        private bool _CanEditCharts;
+        private bool _CanEdit;
 
-        public bool CanEditCharts
+        public bool CanEdit
         {
-            get { return _CanEditCharts; }
-            set { _CanEditCharts = value; NotifyOfPropertyChange(() => CanEditCharts); }
+            get { return _CanEdit; }
+            set { _CanEdit = value; NotifyOfPropertyChange(() => CanEdit); }
         }
 
         #endregion
@@ -159,14 +159,14 @@ namespace Chorg.ViewModels
                 {
                     _SelectedAirport = null;
                     Message = null;
-                    CanEditCharts = false;
+                    CanEdit = false;
                     Charts.Clear();
                 }
                 else
                 {
                     _SelectedAirport = value;
                     Message = SelectedAirport.ICAO;
-                    CanEditCharts = true;
+                    CanEdit = true;
                     Charts.Replace(SelectedAirport.Charts);
                 }
                 NotifyOfPropertyChange(() => SelectedAirport);
@@ -281,6 +281,20 @@ namespace Chorg.ViewModels
         {
             var view = new EditChartsView();
             var viewModel = new EditChartsViewModel(SelectedAirport.GetModel());
+
+            ViewModelBinder.Bind(viewModel, view, null);
+
+            await DialogHost.Show(view, "MainDialogHost");
+            LoadAirportsFromDBAsync();
+        }
+
+        /// <summary>
+        /// Opens the EditAirport Dialog
+        /// </summary>
+        public async void EditAirport()
+        {
+            var view = new EditAirportView();
+            var viewModel = new EditAirportViewModel(SelectedAirport.GetModel());
 
             ViewModelBinder.Bind(viewModel, view, null);
 
