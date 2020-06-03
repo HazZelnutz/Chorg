@@ -40,7 +40,7 @@
         <ListBox Grid.Column="0" Grid.Row="2" x:Name="ChartThumbs">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel/>
+                    <local:VirtualizingWrapPanel/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
