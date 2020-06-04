@@ -107,6 +107,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="VirtualizingWrapPanel, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtualizingWrapPanel.1.5.0\lib\net45\VirtualizingWrapPanel.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -171,7 +174,6 @@
     <Compile Include="Views\PromptDiscardChanges.xaml.cs">
       <DependentUpon>PromptDiscardChanges.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VirtualizingWrapPanel.cs" />
     <Page Include="Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

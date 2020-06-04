@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Chorg.Views"
              xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vw="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <md:DialogHost Identifier="EditChartsDialogHost" Style="{StaticResource MaterialDesignEmbeddedDialogHost}">
@@ -40,7 +41,7 @@
         <ListBox Grid.Column="0" Grid.Row="2" x:Name="ChartThumbs">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <local:VirtualizingWrapPanel/>
+                    <vw:VirtualizingWrapPanel/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
