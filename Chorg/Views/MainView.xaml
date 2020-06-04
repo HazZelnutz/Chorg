@@ -28,8 +28,22 @@
                 <ToolBar>
                     <Button x:Name="AddAirport">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Airport" VerticalAlignment="Center"/>
+                            <md:PackIcon Kind="PlusCircleOutline" VerticalAlignment="Center"/>
                             <TextBlock Text="Add Airport" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="EditAirport" IsEnabled="{Binding CanEdit}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Airport" VerticalAlignment="Center"/>
+                            <TextBlock Text="Edit Airport" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="EditCharts" IsEnabled="{Binding CanEdit}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="FileEdit" VerticalAlignment="Center"/>
+                            <TextBlock Text="Edit Charts" VerticalAlignment="Center" Margin="10 0 0 0"/>
                         </StackPanel>
                     </Button>
 

@@ -32,4 +32,6 @@
     <!-- Converters -->
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+    <local:ContentToStringConverter x:Key="ContentToStringConverter"/>
+    <local:ContentToSolidColorBrushConverter x:Key="ContentToSolidColorBrushConverter"/>
 </ResourceDictionary>

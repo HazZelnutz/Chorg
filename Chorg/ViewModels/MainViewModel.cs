@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -44,6 +44,15 @@ namespace Chorg.ViewModels
                 NotifyOfPropertyChange(() => Message);
             }
         }
+
+        private bool _CanEdit;
+
+        public bool CanEdit
+        {
+            get { return _CanEdit; }
+            set { _CanEdit = value; NotifyOfPropertyChange(() => CanEdit); }
+        }
+
         #endregion
 
         #region SEARCH
@@ -146,10 +155,20 @@ namespace Chorg.ViewModels
         public AirportViewModel SelectedAirport {
             get => _SelectedAirport;
             set {
-                if (value == null) return;
-                _SelectedAirport = value;
-                Message = SelectedAirport.ICAO;
-                Charts.Replace(SelectedAirport.Charts);
+                if (value == null)
+                {
+                    _SelectedAirport = null;
+                    Message = null;
+                    CanEdit = false;
+                    Charts.Clear();
+                }
+                else
+                {
+                    _SelectedAirport = value;
+                    Message = SelectedAirport.ICAO;
+                    CanEdit = true;
+                    Charts.Replace(SelectedAirport.Charts);
+                }
                 NotifyOfPropertyChange(() => SelectedAirport);
             }
         }
@@ -158,10 +177,18 @@ namespace Chorg.ViewModels
         public ChartViewModel SelectedChart {
             get => _SelectedChart;
             set {
-                if (value == null) return;
-                _SelectedChart = value;
-                Message = $"{SelectedAirport.ICAO} | {SelectedChart.Description}";
-                SelectedPDF = SelectedChart.PDFStream;
+                if (value == null)
+                {
+                    _SelectedChart = null;
+                    Message = SelectedAirport == null ? null : SelectedAirport.ICAO;
+                    SelectedPDF = null;
+                }
+                else
+                {
+                    _SelectedChart = value;
+                    Message = $"{SelectedAirport.ICAO} | {SelectedChart.Description}";
+                    SelectedPDF = SelectedChart.PDFStream;
+                }
                 NotifyOfPropertyChange(() => SelectedChart);
             }
         }
@@ -223,6 +250,7 @@ namespace Chorg.ViewModels
             {
                 var airports = await Gateway.GetInstance().GetAirportsAsync();
                 Airports.Replace(airports.ToList().ConvertAll(airport => (AirportViewModel)airport));
+                MainViewModel.GetInstance().TriggerSnackbar($"Loaded {airports.Count} Airport(s)", "OK");
             }
             catch (Exception e)
             {
@@ -244,6 +272,34 @@ namespace Chorg.ViewModels
 
             if(result != null)        
                 Airports.Add((AirportViewModel)result);        
+        }
+
+        /// <summary>
+        /// Opens the Edit Charts Dialog
+        /// </summary>
+        public async void EditCharts()
+        {
+            var view = new EditChartsView();
+            var viewModel = new EditChartsViewModel(SelectedAirport.GetModel());
+
+            ViewModelBinder.Bind(viewModel, view, null);
+
+            await DialogHost.Show(view, "MainDialogHost");
+            LoadAirportsFromDBAsync();
+        }
+
+        /// <summary>
+        /// Opens the EditAirport Dialog
+        /// </summary>
+        public async void EditAirport()
+        {
+            var view = new EditAirportView();
+            var viewModel = new EditAirportViewModel(SelectedAirport.GetModel());
+
+            ViewModelBinder.Bind(viewModel, view, null);
+
+            await DialogHost.Show(view, "MainDialogHost");
+            LoadAirportsFromDBAsync();
         }
 
         /// <summary>

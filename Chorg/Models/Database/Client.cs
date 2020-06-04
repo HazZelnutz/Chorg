@@ -79,8 +79,8 @@ namespace Chorg.Models.Database
                             Identifier = identifier,
                             Description = description,
                             Content = content,
-                            Keywords = keywordsRaw?.Split('\n')
-                        });;
+                            Keywords = keywordsRaw == null ? new List<string>() : keywordsRaw.Split('\n').ToList()
+                        });
                     }
                 }
             }
@@ -89,69 +89,70 @@ namespace Chorg.Models.Database
 
 
         /// <summary>
-        /// Adds the airport with charts to the DB
+        /// Adds the airport
         /// </summary>
         /// <param name="airport">The airport</param>
-        /// <returns>The inserted airport with DB ID and references for charts to the DB</returns>
+        /// <returns>The inserted airport with DB ID</returns>
         public void AddAirport(Airport airport)
         {
             if (AirportExists(airport))
                 throw new DuplicateNameException("Airport is already in Database. Delete it first!");
 
-            using (var transaction = dbCon.BeginTransaction())
+            // Add airport
+            var addAirportCmd = new SQLiteCommand(Properties.Resources.sql_addAirport, dbCon);
+            addAirportCmd.Parameters.Add(new SQLiteParameter(DbType.String) { Value = airport.ICAO });
+            addAirportCmd.Parameters.Add(new SQLiteParameter(DbType.String) { Value = airport.Name });
+            addAirportCmd.ExecuteNonQuery();
+
+            // Get ID from inserted Airport
+            var airportIdReader = new SQLiteCommand(Properties.Resources.sql_readLastRowIdAirport, dbCon).ExecuteReader();
+            airportIdReader.Read();
+            int airportId = airportIdReader.GetInt32(0);
+
+            // Set Id in airport object
+            airport.Id = airportId;  
+        }
+
+        /// <summary>
+        /// Adds the chart to the given airport
+        /// </summary>
+        /// <param name="chart">Chart to add</param>
+        /// <param name="airport">Airport to add to</param>
+        public void AddChartToAirport(Chart chart, Airport airport)
+        {
+            using (var addChartCmd = new SQLiteCommand(Properties.Resources.sql_addChart, dbCon))
             {
-                // Add airport
-                var addAirportCmd = new SQLiteCommand(Properties.Resources.sql_addAirport, dbCon);
-                addAirportCmd.Parameters.Add(new SQLiteParameter(DbType.String) { Value = airport.ICAO });
-                addAirportCmd.Parameters.Add(new SQLiteParameter(DbType.String) { Value = airport.Name });
-                addAirportCmd.ExecuteNonQuery();
-
-                // Get ID from inserted Airport
-                var airportIdReader = new SQLiteCommand(Properties.Resources.sql_readLastRowIdAirport, dbCon).ExecuteReader();
-                airportIdReader.Read();
-                int airportId = airportIdReader.GetInt32(0);
-
-                // Set Id in airport object
-                airport.Id = airportId;
-
-                // Add Charts
-                foreach (Chart chart in airport.Charts)
+                addChartCmd.Parameters.Clear();
+                addChartCmd.Parameters.Add(new SQLiteParameter("@airport", DbType.Int32) { Value = airport.Id });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@page", DbType.Int32) { Value = chart.Page });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@identifier", DbType.String) { Value = chart.Identifier });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@description", DbType.String) { Value = chart.Description });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@content", DbType.String) { Value = chart.Content.ToString() });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@pdf", DbType.Object) { Value = chart.GetChart() });
+                addChartCmd.Parameters.Add(new SQLiteParameter("@keywords", DbType.String)
                 {
-                    using(var addChartCmd = new SQLiteCommand(Properties.Resources.sql_addChart, dbCon))
-                    {
-                        addChartCmd.Parameters.Clear();
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@airport", DbType.Int32) { Value = airportId });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@page", DbType.Int32) { Value = chart.Page });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@identifier", DbType.String) { Value = chart.Identifier });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@description", DbType.String) { Value = chart.Description });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@content", DbType.String) { Value = chart.Content.ToString() });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@pdf", DbType.Object) { Value = chart.GetChart() });
-                        addChartCmd.Parameters.Add(new SQLiteParameter("@keywords", DbType.String) { 
-                            Value = chart.Keywords?.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n')
-                            });
-                        addChartCmd.ExecuteNonQuery();
-                    }
+                    Value = chart.Keywords.Count > 0 ? chart.Keywords.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n') : null
+                });
+                addChartCmd.ExecuteNonQuery();
+            }
 
-                    // Get inserted ID
-                    using (var chartIdCmd = new SQLiteCommand(Properties.Resources.sql_readLastRowIdChart, dbCon))
-                    {
-                        var chartIdReader = chartIdCmd.ExecuteReader();
-                        chartIdReader.Read();
-                        chart.Id = chartIdReader.GetInt32(0);
-                    }
+            // Get inserted ID
+            using (var chartIdCmd = new SQLiteCommand(Properties.Resources.sql_readLastRowIdChart, dbCon))
+            {
+                var chartIdReader = chartIdCmd.ExecuteReader();
+                chartIdReader.Read();
+                chart.Id = chartIdReader.GetInt32(0);
+            }
 
-                    // Get blob and set rawPdf to null for GC
-                    using (var blobCmd = new SQLiteCommand(Properties.Resources.sql_readPdfFromChart, dbCon))
-                    {
-                        chart.FreeRawPdf();
+            // Get blob and set rawPdf to null for GC
+            using (var blobCmd = new SQLiteCommand(Properties.Resources.sql_readPdfFromChart, dbCon))
+            {
+                chart.FreeRawPdf();
 
-                        blobCmd.Parameters.Add(new SQLiteParameter(DbType.Int32) { Value = chart.Id });
-                        var blobReader = blobCmd.ExecuteReader(CommandBehavior.KeyInfo);
-                        blobReader.Read();
-                        chart.Blob = blobReader.GetBlob(0, true);
-                    }
-                }
-                transaction.Commit();
+                blobCmd.Parameters.Add(new SQLiteParameter(DbType.Int32) { Value = chart.Id });
+                var blobReader = blobCmd.ExecuteReader(CommandBehavior.KeyInfo);
+                blobReader.Read();
+                chart.Blob = blobReader.GetBlob(0, true);
             }
         }
 
@@ -171,7 +172,7 @@ namespace Chorg.Models.Database
             updateChartCmd.Parameters.Add(new SQLiteParameter("@id", DbType.Int32) { Value = chart.Id });
             updateChartCmd.Parameters.Add(new SQLiteParameter("@keywords", DbType.String)
             {
-                Value = chart.Keywords?.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n')
+                Value = chart.Keywords.Count > 0 ? chart.Keywords.Aggregate(String.Empty, (acc, current) => acc += current + "\n").Trim('\n') : null
             });
 
             updateChartCmd.ExecuteNonQuery();

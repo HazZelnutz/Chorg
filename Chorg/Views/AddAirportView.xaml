@@ -10,8 +10,19 @@
 
     <StackPanel Margin="20" Width="500">
 
-        <!-- Title -->
-        <TextBlock Text="Add an Airport" Margin="0 0 0 30" FontWeight="SemiBold" FontSize="20pt"/>
+        <DockPanel LastChildFill="False" Margin="0 0 0 30">
+            <!-- Title -->
+            <TextBlock DockPanel.Dock="Left" Text="Add an Airport"  FontWeight="SemiBold" FontSize="20pt" VerticalAlignment="Center"/>
+            
+            <!-- Close -->
+            <Button 
+                DockPanel.Dock="Right"
+                Content="{md:PackIcon Kind=Close}" 
+                Foreground="{DynamicResource MaterialDesignBody}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                VerticalAlignment="Center"/>
+        </DockPanel>
 
         <!-- ICAO -->
         <TextBox x:Name="AirportICAO" MaxLength="4" CharacterCasing="Upper" Margin="0 0 0 30" md:HintAssist.HelperText="ICAO (e.g. EDDN) - CAN'T BE CHANGED AFTERWARDS!"/>
@@ -21,20 +32,6 @@
 
         <!-- OK / Cancel -->
         <DockPanel LastChildFill="False" >
-
-            <!-- PDF -->
-            <Button 
-                DockPanel.Dock="Left"
-                x:Name="LoadPDF"
-                Width="100"
-                Height="100"
-                Content="{md:PackIcon Kind=FilePdfBoxOutline,Size=50}"
-                Foreground="{DynamicResource MaterialDesignBody}"
-                Background="{StaticResource MaterialRed}"
-                BorderBrush="{StaticResource MaterialRed}"
-                md:ButtonAssist.CornerRadius="10"/>
-
-            <TextBlock DockPanel.Dock="Left" x:Name="PDFName" Margin="10 0" FontSize="12pt" FontWeight="SemiBold" VerticalAlignment="Center"/>
 
             <!-- Save -->
             <Button 
@@ -83,17 +80,6 @@
                     </md:PackIcon.Style>
                 </md:PackIcon>
             </Button>
-
-            <!-- Cancel -->
-            <Button 
-                DockPanel.Dock="Right"
-                Content="{md:PackIcon Kind=Cancel}" 
-                Foreground="{DynamicResource MaterialDesignBody}"
-                Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                Margin="0 0 15 0"
-                Command="{x:Static md:DialogHost.CloseDialogCommand}"
-                ToolTip="Cancel"
-                VerticalAlignment="Bottom"/>
         </DockPanel>
     </StackPanel>
 </UserControl>

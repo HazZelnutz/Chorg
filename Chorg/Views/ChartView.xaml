@@ -16,7 +16,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="50"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- Description -->
@@ -26,18 +25,8 @@
         <TextBlock Grid.Row="1" Grid.Column="0" x:Name="Identifier" FontSize="9pt" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
 
         <!-- ContentType -->
-        <TextBlock Grid.RowSpan="2" Grid.Column="1" x:Name="ContentString" Panel.ZIndex="1" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Rectangle Grid.RowSpan="2" Grid.Column="1" Fill="{Binding Accent}"/>
-
-        <!-- Edit -->
-        <md:PopupBox Grid.RowSpan="2" Grid.Column="2" StaysOpen="True" x:Name="Edit" 
-                     Visibility="{Binding ElementName=MainControl, Path=IsMouseOver, Converter={StaticResource BooleanToVisibilityConverter}}"
-                     Margin="5 0 0 0" cal:Message.Attach="[Event Opened] = [Action ResetEdit]">
-            <md:PopupBox.ToggleContent>
-                <md:PackIcon Kind="Pencil" Foreground="{DynamicResource MaterialDesignBody}"/>
-            </md:PopupBox.ToggleContent>
-        </md:PopupBox>
-        
+        <TextBlock Grid.RowSpan="2" Grid.Column="1" Text="{Binding Content, Converter={StaticResource ContentToStringConverter}}" Panel.ZIndex="1" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Rectangle Grid.RowSpan="2" Grid.Column="1" Fill="{Binding Content, Converter={StaticResource ContentToSolidColorBrushConverter}}"/>
     </Grid>
 
 </UserControl>

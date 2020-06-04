@@ -30,7 +30,7 @@ namespace Chorg.Models
             get => _Content;
             set { _Content = value; NotifyOfPropertyChange(() => Content); } }
 
-        public ICollection<string> Keywords { get; set; }
+        public List<string> Keywords { get; set; } = new List<string>();
         public SQLiteBlob Blob { get; set; }
 
         byte[] rawPDF;
@@ -69,6 +69,14 @@ namespace Chorg.Models
             }
             else
                 return rawPDF;
+        }
+
+        public Chart Clone()
+        {
+            Chart temp = (Chart)MemberwiseClone();
+            temp.FreeRawPdf();
+            temp.Keywords = new List<string>(Keywords);
+            return temp;
         }
 
         public void FreeRawPdf()

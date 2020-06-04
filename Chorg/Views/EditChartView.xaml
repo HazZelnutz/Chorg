@@ -59,56 +59,6 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-            <!-- Save -->
-            <Button x:Name="Save" Foreground="{DynamicResource MaterialDesignBody}"
-                md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsBusy}"
-                md:ButtonProgressAssist.IsIndeterminate="{Binding IsBusy}"
-                HorizontalAlignment="Center" Margin="0 0 10 0">
-
-                <!-- Color Transitation if Error -->
-                <Button.Style>
-                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding WasError}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource MaterialRed}" />
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.8" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-
-                <!-- Icon Transitation if Error -->
-                <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Margin="0 0 5 0">
-                        <md:PackIcon.Style>
-                            <Style TargetType="md:PackIcon">
-                                <Setter Property="Kind" Value="ContentSave" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding WasError}" Value="True">
-                                        <Setter Property="Kind" Value="Error" />
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.8" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </md:PackIcon.Style>
-                    </md:PackIcon>
-                    
-                    <TextBlock Text="Save"/>
-                </StackPanel>
-            </Button>
-
             <!-- Delete -->
             <Button x:Name="Delete" Background="{StaticResource MaterialRed}" BorderBrush="{StaticResource MaterialRed}" Foreground="{DynamicResource MaterialDesignBody}"
                             Style="{StaticResource MaterialDesignRaisedButton}" HorizontalAlignment="Center">
