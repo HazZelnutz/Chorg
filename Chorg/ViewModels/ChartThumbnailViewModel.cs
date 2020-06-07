@@ -15,34 +15,14 @@ using System.Runtime.InteropServices;
 
 namespace Chorg.ViewModels
 {
-    public class ChartThumbnailViewModel : Screen
+    public class ChartThumbnailViewModel : ChartViewModel
     {
         public BitmapSource Thumbnail { get; }
-        public ContentType Content { get => model.Content; }
 
-        private Chart model;
-
-        public ChartThumbnailViewModel(Chart chart)
+        public ChartThumbnailViewModel(Chart chart) : base(chart)
         {
-            model = chart;
-            model.PropertyChanged += ModelChanged;
             Thumbnail = Render();
         }
-
-        private void ModelChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "Content":
-                    NotifyOfPropertyChange(() => Content);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        public Chart GetModel() => model;
 
         private BitmapSource Render()
         {
