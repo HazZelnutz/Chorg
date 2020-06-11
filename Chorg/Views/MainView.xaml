@@ -67,16 +67,16 @@
             </ToolBarTray>
 
             <!-- Row 1 // Main Content -->
-            <Grid Grid.Row="1" Margin="20">
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
 
                 <!-- Col 0 // Selection -->
-                <Grid>
+                <Grid Grid.Column="0" Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="*"/>
@@ -123,9 +123,64 @@
                     </Grid>
                 </Grid>
 
-                <!-- Col 1 // ChartView -->
-                <local:PDFViewer Grid.Column="2" PDFStream="{Binding SelectedPDF}" Visibility="{Binding ElementName=DialogHost, Path=IsOpen, Converter={StaticResource InverseBoolToVisConverter}}"/>
+                <!-- Col 2 // ChartView -->
+                <local:PDFViewer Grid.Column="1" Margin="0 20 20 20" PDFStream="{Binding SelectedPDF}" Visibility="{Binding ElementName=DialogHost, Path=IsOpen, Converter={StaticResource InverseBoolToVisConverter}}"/>
 
+                
+                <!-- Col 3 // Pinned Charts -->
+
+                <Expander Grid.Column="2" ExpandDirection="Left" Background="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                          Height="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=ActualHeight}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <StackPanel.LayoutTransform>
+                                <RotateTransform Angle="90"/>
+                            </StackPanel.LayoutTransform>
+
+                            <md:PackIcon Kind="Pin" Margin="0 0 8 0"/>
+                            <TextBlock Text="Pinned Charts"/>
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <DockPanel>
+                        <Button DockPanel.Dock="Top" x:Name="PinCurrentChart" Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                                HorizontalAlignment="Stretch"
+                                md:ButtonAssist.CornerRadius="0">
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Pin Current" Margin="0 0 5 0"/>
+                                <md:PackIcon Kind="Pin" VerticalAlignment="Center"/>
+                            </StackPanel>    
+                        </Button>
+
+                        <Separator DockPanel.Dock="Top" Margin="0 10" Opacity="0.3"/>
+
+                        <ListView DockPanel.Dock="Top" x:Name="PinnedCharts" Width="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                  SelectionMode="Single"
+                                  cal:Message.Attach="[Event SelectionChanged] = [Action SelectedPinnedChart($eventArgs)]">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" MaxWidth="150">
+                                            <TextBlock.LayoutTransform>
+                                                <RotateTransform Angle="-90"/>
+                                            </TextBlock.LayoutTransform>
+                                        </TextBlock>
+                                        <Grid>
+                                            <local:ChartThumbnailView Magnifiable="False"/>
+                                            <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Cursor="Hand" 
+                                                  cal:Message.Attach="[Event MouseLeftButtonDown] = [Action RemovePinnedChart($dataContext)]"
+                                                  Visibility="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsMouseOver, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <Rectangle Width="30" Height="30" RadiusX="20" RadiusY="20" Fill="{StaticResource MaterialRed}"/>
+                                                <md:PackIcon Kind="PinOffOutline" Width="20" Height="20" Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Grid>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </DockPanel>
+                </Expander>
             </Grid>
 
             <!-- Snack Bar -->
