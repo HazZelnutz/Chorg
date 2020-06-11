@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MaterialDesignThemes.Wpf;
 
 namespace Chorg.Views
 {
@@ -23,6 +25,32 @@ namespace Chorg.Views
         public ChartThumbnailView()
         {
             InitializeComponent();
+        }
+
+        public bool Magnifiable 
+        {
+            get => (bool)GetValue(MagnifiableProperty);
+            set => SetValue(MagnifiableProperty, value);
+        }
+
+        static readonly DependencyProperty MagnifiableProperty =
+            DependencyProperty.Register("Magnifiable", typeof(bool), typeof(ChartThumbnailView), new PropertyMetadata(true, MagnifiableChangedCallback));
+
+        private static void MagnifiableChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as ChartThumbnailView).MagnifiableChanged();
+        }
+
+        private void MagnifiableChanged()
+        {
+            if (Magnifiable)
+            {
+                Binding binding = new Binding("MainControl.IsMouseOver");
+                binding.Converter = new BooleanToVisibilityConverter();
+                Magnifier.SetBinding(VisibilityProperty, binding);
+            }
+            else
+                Magnifier.Visibility = Visibility.Collapsed;
         }
     }
 }
