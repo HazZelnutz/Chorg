@@ -1,4 +1,4 @@
 language: csharp
 solution: Chorg.sln
 before_install: 
-  - ./nuget.exe restore Chorg.sln
+  - sudo nuget restore Chorg.sln
