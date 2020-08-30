@@ -58,8 +58,9 @@ namespace Chorg.ViewModels
             try
             {
                 var newAirport = await Gateway.GetInstance().AddAirportAsync(AirportICAO, string.IsNullOrWhiteSpace(AirportName) ? null : AirportName);
+                MainViewModel.GetInstance().Airports.Add(new AirportViewModel(newAirport));
                 MainViewModel.GetInstance().TriggerSnackbar($"Added {newAirport.ICAO}", "WELCOME ABOARD");
-                DialogHost.CloseDialogCommand.Execute(newAirport, null);
+                DialogHost.CloseDialogCommand.Execute(null, null);
             }
             catch (Exception e)
             {

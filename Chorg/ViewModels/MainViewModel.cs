@@ -274,12 +274,10 @@ namespace Chorg.ViewModels
             // Bind view to viewModel by hand and pass it to the dialoghost
             var view = new AddAirportView();
             var viewModel = new AddAirportViewModel();
+
             ViewModelBinder.Bind(viewModel, view, null);
 
-            var result = (Airport)await DialogHost.Show(view, "MainDialogHost");
-
-            if(result != null)        
-                Airports.Add((AirportViewModel)result);        
+            await DialogHost.Show(view, "MainDialogHost");     
         }
 
         /// <summary>
@@ -293,7 +291,7 @@ namespace Chorg.ViewModels
             ViewModelBinder.Bind(viewModel, view, null);
 
             await DialogHost.Show(view, "MainDialogHost");
-            LoadAirportsFromDBAsync();
+            // NotifyOfPropertyChange(() => Charts);
         }
 
         /// <summary>
@@ -307,7 +305,6 @@ namespace Chorg.ViewModels
             ViewModelBinder.Bind(viewModel, view, null);
 
             await DialogHost.Show(view, "MainDialogHost");
-            LoadAirportsFromDBAsync();
         }
 
         /// <summary>

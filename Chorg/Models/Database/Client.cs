@@ -69,11 +69,10 @@ namespace Chorg.Models.Database
                         string identifier = chartReader[COLUMNS_CHARTS.IDENTIFIER.ToString()] == DBNull.Value ? null : chartReader.GetString((int)COLUMNS_CHARTS.IDENTIFIER);
                         string description = chartReader[COLUMNS_CHARTS.DESCRIPTION.ToString()] == DBNull.Value ? null : chartReader.GetString((int)COLUMNS_CHARTS.DESCRIPTION);
                         Enum.TryParse(chartReader.GetString((int)COLUMNS_CHARTS.CONTENT), out ContentType content);
-                        SQLiteBlob blob = chartReader.GetBlob((int)COLUMNS_CHARTS.PDF, true);
                         string keywordsRaw = chartReader[COLUMNS_CHARTS.KEYWORDS.ToString()] == DBNull.Value ? null : chartReader.GetString((int)COLUMNS_CHARTS.KEYWORDS);
                         int size = chartReader.GetInt32((int)COLUMNS_CHARTS.PDFSIZE);
 
-                        airport.Charts.Add(new Chart(page, blob, size)
+                        airport.Charts.Add(new Chart(page, size)
                         {
                             Id = id,
                             Identifier = identifier,
@@ -87,6 +86,26 @@ namespace Chorg.Models.Database
             return result;
         }
 
+        public byte[] GetChartRaw(Chart chart)
+        {
+            using (var cmd = new SQLiteCommand("SELECT *, LENGTH(PDF) AS PDFSIZE FROM CHARTS WHERE ID = ?", dbCon))
+            {
+                cmd.Parameters.Add(new SQLiteParameter(DbType.Int32) { Value = chart.Id });
+                var chartReader = cmd.ExecuteReader(CommandBehavior.KeyInfo);
+
+                if (chartReader.Read())
+                {
+                    SQLiteBlob blob = chartReader.GetBlob((int)COLUMNS_CHARTS.PDF, true);
+                    int size = chartReader.GetInt32((int)COLUMNS_CHARTS.PDFSIZE);
+
+                    byte[] result = new byte[size];
+                    blob.Read(result, size, 0);
+                    return result;
+                }
+                else
+                    return null;
+            }
+        }
 
         /// <summary>
         /// Adds the airport
@@ -144,16 +163,8 @@ namespace Chorg.Models.Database
                 chart.Id = chartIdReader.GetInt32(0);
             }
 
-            // Get blob and set rawPdf to null for GC
-            using (var blobCmd = new SQLiteCommand(Properties.Resources.sql_readPdfFromChart, dbCon))
-            {
-                chart.FreeRawPdf();
-
-                blobCmd.Parameters.Add(new SQLiteParameter(DbType.Int32) { Value = chart.Id });
-                var blobReader = blobCmd.ExecuteReader(CommandBehavior.KeyInfo);
-                blobReader.Read();
-                chart.Blob = blobReader.GetBlob(0, true);
-            }
+            // Free Bytes
+            chart.FreeRawPdf();
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
+using Chorg.Views;
 
 namespace Chorg.ViewModels
 {
@@ -63,10 +64,9 @@ namespace Chorg.ViewModels
         /// Updates the model and returns the new one
         /// </summary>
         /// <returns>Updated model</returns>
-        private Airport GetUpdatedModel()
+        private void UpdateModel()
         {
             airportModel.Name = AirportName;
-            return airportModel;
         }
 
         /// <summary>
@@ -79,7 +79,8 @@ namespace Chorg.ViewModels
 
             try
             {
-                await Gateway.GetInstance().UpdateAirportAsync(GetUpdatedModel(), false);
+                UpdateModel();
+                await Gateway.GetInstance().UpdateAirportAsync(airportModel, false);
                 MainViewModel.GetInstance().TriggerSnackbar($"Updated {airportModel.ICAO}", "OK");
                 DialogHost.CloseDialogCommand.Execute(null, null);
             }
@@ -105,6 +106,7 @@ namespace Chorg.ViewModels
                 try
                 {
                     await Gateway.GetInstance().DeleteAirportAsync(airportModel);
+                    MainViewModel.GetInstance().Airports.Remove(airportModel);
                     MainViewModel.GetInstance().TriggerSnackbar($"Deleted {airportModel.ICAO}", "BYE");
                     DialogHost.CloseDialogCommand.Execute(null, null);
                 }

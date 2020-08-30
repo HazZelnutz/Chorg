@@ -5,6 +5,7 @@ using Chorg.ViewModels;
 using System.IO;
 using Caliburn.Micro;
 using Chorg.Views;
+using System.Linq;
 
 namespace Chorg.Models
 {
@@ -36,10 +37,9 @@ namespace Chorg.Models
         byte[] rawPDF;
         int size;
 
-        public Chart(int page, SQLiteBlob blob, int size)
+        public Chart(int page, int size)
         {
             this.Page = page;
-            this.Blob = blob;
             this.size = size;
         }
 
@@ -57,9 +57,7 @@ namespace Chorg.Models
                 try
                 {
                     // Read Data from DB
-                    rawPDF = new byte[size];
-                    Blob.Read(rawPDF, size, 0);
-                    return rawPDF;
+                    return Gateway.GetInstance().GetPDFBytes(this);
                 }
                 catch (Exception e)
                 {
@@ -74,7 +72,6 @@ namespace Chorg.Models
         public Chart Clone()
         {
             Chart temp = (Chart)MemberwiseClone();
-            temp.FreeRawPdf();
             temp.Keywords = new List<string>(Keywords);
             return temp;
         }

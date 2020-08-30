@@ -122,5 +122,8 @@ namespace Chorg
 
         public void CloseDB()
             => DBClient.Close();
+
+        public byte[] GetPDFBytes(Chart chart)
+            => DBClient.GetChartRaw(chart);
     }
 }

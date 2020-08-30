@@ -35,6 +35,18 @@ namespace Chorg.Models
             }
         }
 
+        public static void Remove<T>(this ICollection<T> collection, Airport model) where T : AirportViewModel
+        {
+            foreach (var viewModel in collection)
+            {
+                if (viewModel.GetModel().Id == model.Id)
+                {
+                    collection.Remove(viewModel);
+                    return;
+                }
+            }
+        }
+
         public static ChartViewModel GetByModel<T>(this ICollection<T> collection, Chart model) where T : ChartViewModel
         {
             foreach (var item in collection)
