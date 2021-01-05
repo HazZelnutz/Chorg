@@ -7,14 +7,12 @@ using MaterialDesignThemes.Wpf;
 
 namespace Chorg.ViewModels
 {
-    public class EditChartViewModel : Screen
+    public class EditChartViewModel : ChartViewModel
     {
-        private Chart chartModel;
-
-        private ContentType Content
+        new private ContentType Content
         {
-            get => chartModel.Content;
-            set { chartModel.Content = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
+            get => model.Content;
+            set { model.Content = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
         #region ContentBools
@@ -49,21 +47,21 @@ namespace Chorg.ViewModels
         }
         #endregion
 
-        public string Description
+        new public string Description
         {
-            get => chartModel.Description;
-            set { chartModel.Description = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
+            get => model.Description;
+            set { model.Description = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
-        public string Identifier
+        new public string Identifier
         {
-            get => chartModel.Identifier;
-            set { chartModel.Identifier = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
+            get => model.Identifier;
+            set { model.Identifier = value; (Parent as EditChartsViewModel).UnsavedChanges = true; }
         }
 
         public ObservableCollection<string> Keywords
         {
-            get => new ObservableCollection<string>(chartModel.Keywords);
+            get => new ObservableCollection<string>(model.Keywords);
         }
 
         public bool HasKeywords
@@ -78,15 +76,13 @@ namespace Chorg.ViewModels
             set { _NewKeyword = value; NotifyOfPropertyChange(() => NewKeyword); }
         }
 
-        public EditChartViewModel(Chart chart)
+        public EditChartViewModel(Chart chart) : base(chart)
         {
-            // Model and ViewModel
-            chartModel = chart;
         }
 
         public void DeleteKeyword(string keyword)
         {
-            chartModel.Keywords.Remove(keyword);
+            model.Keywords.Remove(keyword);
             (Parent as EditChartsViewModel).UnsavedChanges = true;     
             NotifyOfPropertyChange(() => Keywords);
             NotifyOfPropertyChange(() => HasKeywords);
@@ -98,7 +94,7 @@ namespace Chorg.ViewModels
             {
                 if (!Keywords.Contains(NewKeyword))
                 {
-                    chartModel.Keywords.Add(NewKeyword);
+                    model.Keywords.Add(NewKeyword);
                     (Parent as EditChartsViewModel).UnsavedChanges = true;
                     NotifyOfPropertyChange(() => Keywords);
                     NotifyOfPropertyChange(() => HasKeywords);
@@ -133,10 +129,16 @@ namespace Chorg.ViewModels
                 try
                 {
                     // Remove from Database
-                    await Gateway.GetInstance().DeleteChartAsync(chartModel);
+                    await Gateway.GetInstance().DeleteChartAsync(model);
 
                     // Remove from Chart Editor
-                    (Parent as EditChartsViewModel).ChartThumbs.Remove(chartModel);
+                    (Parent as EditChartsViewModel).ChartThumbs.Remove(model);
+
+                    // Remove from Charts Main List
+                    MainViewModel.GetInstance().Charts.Remove(model);
+
+                    // Remove from pinned Charts (if available)
+                    MainViewModel.GetInstance().PinnedCharts.Remove(model);
                 }
                 catch (Exception e)
                 {

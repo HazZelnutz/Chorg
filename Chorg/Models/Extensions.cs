@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Chorg.ViewModels;
 using Chorg.Models;
+using Chorg.Views;
 
 namespace Chorg.Models
 {
@@ -22,16 +23,39 @@ namespace Chorg.Models
                 collection.Add(current);
         }
 
-        public static void Remove(this ICollection<ChartThumbnailViewModel> collection, Chart item)
+        public static void Remove<T>(this ICollection<T> collection, Chart model) where T : ChartViewModel
         {
             foreach (var viewModel in collection)
             {
-                if(viewModel.GetModel().Id == item.Id)
+                if(viewModel.GetModel().Id == model.Id)
                 {
                     collection.Remove(viewModel);
                     return;
                 }
             }
+        }
+
+        public static void Remove<T>(this ICollection<T> collection, Airport model) where T : AirportViewModel
+        {
+            foreach (var viewModel in collection)
+            {
+                if (viewModel.GetModel().Id == model.Id)
+                {
+                    collection.Remove(viewModel);
+                    return;
+                }
+            }
+        }
+
+        public static ChartViewModel GetByModel<T>(this ICollection<T> collection, Chart model) where T : ChartViewModel
+        {
+            foreach (var item in collection)
+            {
+                if (item.GetModel() == model)
+                    return item;
+            }
+
+            return null;
         }
     }
 }

@@ -17,12 +17,11 @@
             </md:Badged.Badge>
             
             <!-- Actual Thumbnail -->
-            <Image x:Name="Thumbnail" Width="100" Height="141"/>
+            <Image Source="{Binding Thumbnail}" Width="100" Height="141"/>
         </md:Badged>
 
         <!-- Big Preview -->
-        <md:PopupBox VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                     Visibility="{Binding ElementName=MainControl, Path=IsMouseOver, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <md:PopupBox VerticalAlignment="Bottom" HorizontalAlignment="Right" x:Name="Magnifier">
             <md:PopupBox.ToggleContent>
                 <Grid>
                     <Rectangle Width="30" Height="30" RadiusX="20" RadiusY="20" Fill="{Binding Content, Converter={StaticResource ContentToSolidColorBrushConverter}}"/>

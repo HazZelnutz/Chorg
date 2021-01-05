@@ -169,10 +169,16 @@ namespace Chorg.ViewModels
                 if(chart.Id == null)
                 {
                     await Gateway.GetInstance().AddChartToAirportAsync(chart, model);
+                    model.Charts.Add(chart);
                 }
                 else
                 {
                     await Gateway.GetInstance().UpdateChartAsync(chart);
+                    Chart original = model.Charts.ToList().Find(x => x.Id == chart.Id);
+                    original.Content = chart.Content;
+                    original.Description = chart.Description;
+                    original.Identifier = chart.Identifier;
+                    original.Keywords = chart.Keywords;
                 }
             }
             UnsavedChanges = false;

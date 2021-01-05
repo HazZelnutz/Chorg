@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Data;
 using Caliburn.Micro;
 using Chorg.Models;
@@ -31,6 +32,7 @@ namespace Chorg.ViewModels
 
         public ObservableCollection<AirportViewModel> Airports { get; private set; } = new ObservableCollection<AirportViewModel>();
         public ObservableCollection<ChartViewModel> Charts { get; private set; } = new ObservableCollection<ChartViewModel>();
+        public ObservableCollection<ChartThumbnailViewModel> PinnedCharts { get; private set; } = new ObservableCollection<ChartThumbnailViewModel>();
 
         public SnackbarMessageQueue SnackbarQueue { get; private set; } = new SnackbarMessageQueue();
 
@@ -51,6 +53,11 @@ namespace Chorg.ViewModels
         {
             get { return _CanEdit; }
             set { _CanEdit = value; NotifyOfPropertyChange(() => CanEdit); }
+        }
+
+        public bool CanPinCurrentChart
+        {
+            get => SelectedChart != null && (PinnedCharts.GetByModel(SelectedChart.GetModel()) == null);
         }
 
         #endregion
@@ -186,9 +193,10 @@ namespace Chorg.ViewModels
                 else
                 {
                     _SelectedChart = value;
-                    Message = $"{SelectedAirport.ICAO} | {SelectedChart.Description}";
+                    Message = SelectedChart.Description;
                     SelectedPDF = SelectedChart.PDFStream;
                 }
+                NotifyOfPropertyChange(() => CanPinCurrentChart);
                 NotifyOfPropertyChange(() => SelectedChart);
             }
         }
@@ -266,12 +274,10 @@ namespace Chorg.ViewModels
             // Bind view to viewModel by hand and pass it to the dialoghost
             var view = new AddAirportView();
             var viewModel = new AddAirportViewModel();
+
             ViewModelBinder.Bind(viewModel, view, null);
 
-            var result = (Airport)await DialogHost.Show(view, "MainDialogHost");
-
-            if(result != null)        
-                Airports.Add((AirportViewModel)result);        
+            await DialogHost.Show(view, "MainDialogHost");     
         }
 
         /// <summary>
@@ -285,7 +291,7 @@ namespace Chorg.ViewModels
             ViewModelBinder.Bind(viewModel, view, null);
 
             await DialogHost.Show(view, "MainDialogHost");
-            LoadAirportsFromDBAsync();
+            SelectedAirport = SelectedAirport; // Will run setter of property in order to see added charts
         }
 
         /// <summary>
@@ -299,7 +305,26 @@ namespace Chorg.ViewModels
             ViewModelBinder.Bind(viewModel, view, null);
 
             await DialogHost.Show(view, "MainDialogHost");
-            LoadAirportsFromDBAsync();
+        }
+
+        /// <summary>
+        /// Called when selecting a pinned Chart
+        /// </summary>
+        public void SelectedPinnedChart(SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+                SelectedChart = (e.AddedItems[0] as ChartThumbnailViewModel);
+            else
+                SelectedChart = null;
+        }
+
+        /// <summary>
+        /// Add the Current Chart to Pinned Charts
+        /// </summary>
+        public void PinCurrentChart()
+        {
+            PinnedCharts.Add(new ChartThumbnailViewModel(SelectedChart.GetModel()));
+            NotifyOfPropertyChange(() => CanPinCurrentChart);
         }
 
         /// <summary>
