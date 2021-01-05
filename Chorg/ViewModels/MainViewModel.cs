@@ -291,7 +291,7 @@ namespace Chorg.ViewModels
             ViewModelBinder.Bind(viewModel, view, null);
 
             await DialogHost.Show(view, "MainDialogHost");
-            // NotifyOfPropertyChange(() => Charts);
+            SelectedAirport = SelectedAirport; // Will run setter of property in order to see added charts
         }
 
         /// <summary>
