@@ -133,6 +133,12 @@ namespace Chorg.ViewModels
 
                     // Remove from Chart Editor
                     (Parent as EditChartsViewModel).ChartThumbs.Remove(model);
+
+                    // Remove from Charts Main List
+                    MainViewModel.GetInstance().Charts.Remove(model);
+
+                    // Remove from pinned Charts (if available)
+                    MainViewModel.GetInstance().PinnedCharts.Remove(model);
                 }
                 catch (Exception e)
                 {

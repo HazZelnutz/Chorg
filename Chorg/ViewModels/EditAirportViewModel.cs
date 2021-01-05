@@ -3,6 +3,7 @@ using System;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using Chorg.Views;
+using System.Linq;
 
 namespace Chorg.ViewModels
 {
@@ -107,6 +108,14 @@ namespace Chorg.ViewModels
                 {
                     await Gateway.GetInstance().DeleteAirportAsync(airportModel);
                     MainViewModel.GetInstance().Airports.Remove(airportModel);
+
+                    // Delete Charts in pinned charts (if available)
+                    foreach (Chart chart in airportModel.Charts)
+                    {
+                        if (MainViewModel.GetInstance().PinnedCharts.Any(x => x.GetModel().Id == chart.Id))
+                            MainViewModel.GetInstance().PinnedCharts.Remove(chart);
+                    }
+
                     MainViewModel.GetInstance().TriggerSnackbar($"Deleted {airportModel.ICAO}", "BYE");
                     DialogHost.CloseDialogCommand.Execute(null, null);
                 }

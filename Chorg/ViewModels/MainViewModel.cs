@@ -327,11 +327,6 @@ namespace Chorg.ViewModels
             NotifyOfPropertyChange(() => CanPinCurrentChart);
         }
 
-        public void RemovePinnedChart(ChartThumbnailViewModel chart)
-        {
-            PinnedCharts.Remove(chart);
-        }
-
         /// <summary>
         /// Display About Screen
         /// </summary>
